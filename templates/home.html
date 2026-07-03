@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Extraction Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{--bg:#0b1120;--bg-card:rgba(30,41,59,0.6);--bg-card-solid:#1e293b;--bg-input:rgba(15,23,42,0.8);--bg-header:linear-gradient(135deg,#0f172a,#1e293b);--text:#e2e8f0;--text-secondary:#cbd5e1;--text-muted:#64748b;--text-dim:#475569;--accent:#6366f1;--accent-light:#818cf8;--accent-glow:rgba(99,102,241,0.25);--accent-border:rgba(99,102,241,0.12);--accent-border-light:rgba(99,102,241,0.08);--danger:#ef4444;--danger-bg:rgba(239,68,68,0.12);--danger-text:#fca5a5;--success:#10b981;--success-bg:rgba(5,150,105,0.25);--success-text:#6ee7b7;--warning:#f59e0b;--hover-bg:rgba(99,102,241,0.06);--scrollbar:rgba(99,102,241,0.2);--toast-bg:rgba(15,23,42,0.95);--shadow:0 8px 32px rgba(0,0,0,0.15)}
+[data-theme="light"]{--bg:#f1f5f9;--bg-card:rgba(255,255,255,0.85);--bg-card-solid:#ffffff;--bg-input:rgba(255,255,255,0.9);--bg-header:linear-gradient(135deg,#e2e8f0,#f8fafc);--text:#1e293b;--text-secondary:#334155;--text-muted:#64748b;--text-dim:#94a3b8;--accent:#4f46e5;--accent-light:#6366f1;--accent-glow:rgba(79,70,229,0.2);--accent-border:rgba(79,70,229,0.15);--accent-border-light:rgba(79,70,229,0.08);--danger-text:#dc2626;--danger-bg:rgba(220,38,38,0.08);--success-text:#059669;--success-bg:rgba(5,150,105,0.1);--hover-bg:rgba(79,70,229,0.04);--scrollbar:rgba(79,70,229,0.15);--toast-bg:rgba(30,41,59,0.95);--shadow:0 8px 32px rgba(0,0,0,0.08);border-color:rgba(0,0,0,0.06)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);min-height:100vh;color:var(--text);transition:background .3s,color .3s}
+.header{background:var(--bg-header);border-bottom:1px solid var(--accent-border);padding:18px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);transition:background .3s}
+.header-brand{display:flex;align-items:center;gap:14px}
+.header-brand .logo-icon{width:40px;height:40px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;box-shadow:0 4px 15px rgba(99,102,241,0.3)}
+.header-brand h1{font-size:20px;font-weight:700;background:linear-gradient(135deg,var(--text),var(--text-muted));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.theme-toggle{background:var(--bg-input);border:1px solid var(--accent-border);color:var(--text-muted);width:36px;height:36px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s}
+.theme-toggle:hover{color:var(--accent-light);border-color:var(--accent)}
+.hero{text-align:center;padding:40px 20px 24px;position:relative}
+.hero::before{content:'';position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:600px;height:300px;background:radial-gradient(ellipse,rgba(99,102,241,0.08),transparent 70%);pointer-events:none}
+.hero h2{font-size:26px;font-weight:800;background:linear-gradient(135deg,#f8fafc,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.hero p{color:var(--text-muted);font-size:14px}
+.tab-bar{display:flex;gap:4px;max-width:1100px;margin:0 auto;padding:0 20px}
+.tab-btn{padding:10px 22px;border:none;background:transparent;color:var(--text-muted);font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;border-radius:10px 10px 0 0;transition:all .2s;display:flex;align-items:center;gap:8px;text-decoration:none}
+.tab-btn i{font-size:14px}
+.tab-btn:hover{color:var(--text-secondary);background:rgba(99,102,241,0.05)}
+.tab-btn.active{color:var(--text);background:var(--bg-card);backdrop-filter:blur(16px);border:1px solid var(--accent-border);border-bottom:none;position:relative}
+.tab-btn.active::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:linear-gradient(90deg,#6366f1,#8b5cf6)}
+.main-container{max-width:1100px;margin:0 auto;padding:0 20px 40px}
+.tab-content{display:none;animation:fadeSlideUp .35s ease}
+.tab-content.active{display:block}
+.filter-card{background:var(--bg-card);backdrop-filter:blur(16px);border:1px solid var(--accent-border);border-radius:20px;padding:24px 28px;box-shadow:var(--shadow);margin-bottom:24px;transition:background .3s;position:relative;z-index:1}
+.filter-bar{display:flex;flex-wrap:wrap;align-items:flex-end;gap:16px}
+.filter-group{flex:1;min-width:200px}
+.filter-group label{display:block;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--accent-light);margin-bottom:6px}
+.filter-group-wide{flex:2}
+.filter-input{width:100%;padding:11px 14px;background:var(--bg-input);border:1px solid var(--accent-border);border-radius:10px;color:var(--text);font-size:14px;font-family:inherit;transition:all .2s;outline:none}
+.filter-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,102,241,0.12)}
+.filter-input::placeholder{color:var(--text-dim)}
+.country-select{position:relative}
+.country-options{position:absolute;width:100%;max-height:220px;overflow-y:auto;background:var(--toast-bg);backdrop-filter:blur(12px);border:1px solid var(--accent-border);border-radius:10px;display:none;z-index:50;margin-top:4px;box-shadow:0 12px 40px rgba(0,0,0,0.4)}
+.country-options div{padding:9px 14px;cursor:pointer;font-size:13px;color:var(--text-secondary);transition:all .15s}
+.country-options div:hover{background:rgba(99,102,241,0.12);color:var(--text)}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;min-height:28px}
+.tag{display:inline-flex;align-items:center;gap:6px;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.2);color:var(--accent-light);padding:4px 12px;border-radius:20px;font-size:12px;font-weight:500}
+.tag span{cursor:pointer;color:var(--accent-light);font-size:14px;line-height:1}
+.tag span:hover{color:var(--danger-text)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 22px;border:none;border-radius:10px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .25s ease;text-decoration:none;white-space:nowrap}
+.btn-primary{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;box-shadow:0 4px 15px rgba(99,102,241,0.25)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(99,102,241,0.35)}
+.btn-success{background:linear-gradient(135deg,#059669,#10b981);color:#fff;box-shadow:0 4px 15px rgba(5,150,105,0.25)}
+.btn-success:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(5,150,105,0.35)}
+.btn-add{background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;box-shadow:0 4px 15px rgba(124,58,237,0.25)}
+.btn-add:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(124,58,237,0.35)}
+.btn-ghost{background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.15);color:var(--accent-light)}
+.btn-ghost:hover{background:rgba(99,102,241,0.2)}
+.btn-secondary{background:var(--bg-input);border:1px solid var(--border-color);color:var(--text-secondary)}
+.btn-secondary:hover{background:var(--border-color)}
+.btn-danger{background:var(--danger-bg);border:1px solid rgba(239,68,68,0.2);color:var(--danger-text)}
+.btn-danger:hover{background:rgba(239,68,68,0.2)}
+.btn-sm{padding:6px 14px;font-size:12px;border-radius:8px}
+.btn-icon{padding:6px 10px;font-size:13px;border-radius:8px;min-width:32px}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+.filter-actions{display:flex;align-items:center;gap:10px;padding-bottom:2px}
+.table-card{background:var(--bg-card);backdrop-filter:blur(16px);border:1px solid var(--accent-border-light);border-radius:20px;overflow:hidden;box-shadow:var(--shadow);transition:background .3s}
+.table-header{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;border-bottom:1px solid var(--accent-border-light)}
+.table-header h3{font-size:15px;font-weight:600;color:var(--text)}
+.table-header h3 i{color:var(--accent-light);margin-right:8px}
+.record-count{font-size:13px;color:var(--text-muted);background:rgba(99,102,241,0.08);padding:4px 12px;border-radius:20px}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead{background:var(--bg-input)}
+th{padding:12px 16px;text-align:left;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);border-bottom:1px solid var(--accent-border-light);user-select:none;white-space:nowrap}
+th.sortable{cursor:pointer;transition:color .15s}
+th.sortable:hover{color:var(--accent-light)}
+th.sortable i{margin-left:4px;font-size:10px;opacity:0;transition:opacity .15s}
+th.sortable:hover i,th.sortable.active i{opacity:1}
+th.sortable.active{color:var(--accent-light)}
+th .checkbox-cell{width:20px;padding:0}
+td{padding:11px 16px;border-bottom:1px solid var(--accent-border-light);color:var(--text-secondary);transition:color .15s}
+td .action-btns{display:flex;gap:4px;opacity:0;transition:opacity .15s}
+tr:hover td .action-btns{opacity:1}
+tbody tr{transition:all .15s ease}
+tbody tr:hover{background:var(--hover-bg)}
+tbody tr:hover td{color:var(--text)}
+tbody tr:nth-child(even){background:rgba(255,255,255,0.015)}
+tbody tr.selected{background:rgba(99,102,241,0.08)!important}
+th:first-child,td:first-child{width:40px;text-align:center}
+.empty-state{text-align:center;padding:60px 20px}
+.empty-icon{font-size:48px;color:rgba(99,102,241,0.2);margin-bottom:16px}
+.empty-state h3{font-size:18px;color:var(--text-secondary);margin-bottom:6px}
+.empty-state p{color:var(--text-dim);font-size:14px}
+.sticky-bar{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:var(--bg-input);backdrop-filter:blur(12px);border-top:1px solid var(--accent-border-light)}
+.sticky-bar .total{font-size:14px;color:var(--text-secondary)}
+.sticky-bar .total strong{color:var(--text)}
+.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.admin-card{background:var(--bg-card);backdrop-filter:blur(16px);border:1px solid var(--accent-border-light);border-radius:20px;padding:24px;box-shadow:var(--shadow);transition:background .3s}
+.admin-card h3{font-size:15px;font-weight:600;color:var(--text);margin-bottom:16px}
+.admin-card h3 i{color:var(--accent-light);margin-right:8px}
+.role-badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase}
+.role-badge.admin{background:rgba(99,102,241,0.15);color:var(--accent-light);border:1px solid rgba(99,102,241,0.2)}
+.role-badge.viewer{background:rgba(16,185,129,0.12);color:#6ee7b7;border:1px solid rgba(16,185,129,0.15)}
+.role-badge.editor{background:rgba(245,158,11,0.12);color:#fcd34d;border:1px solid rgba(245,158,11,0.15)}
+.role-badge.status{font-size:10px;padding:1px 8px}
+.role-badge.status.New{background:rgba(99,102,241,0.12);color:#818cf8;border:1px solid rgba(99,102,241,0.15)}
+.role-badge.status.Contacted{background:rgba(245,158,11,0.12);color:#fcd34d;border:1px solid rgba(245,158,11,0.15)}
+.role-badge.status.Qualified{background:rgba(5,150,105,0.12);color:#6ee7b7;border:1px solid rgba(5,150,105,0.15)}
+.role-badge.status.Lost{background:rgba(239,68,68,0.12);color:#fca5a5;border:1px solid rgba(239,68,68,0.15)}
+.role-badge.status.Deleted{background:rgba(100,116,139,0.12);color:#94a3b8;border:1px solid rgba(100,116,139,0.15)}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:12px;font-weight:600;color:var(--accent-light);margin-bottom:5px}
+.form-group .req{color:#f87171}
+.form-group input,.form-group select{width:100%;padding:10px 13px;background:var(--bg-input);border:1px solid var(--accent-border);border-radius:10px;color:var(--text);font-size:13px;font-family:inherit;transition:all .2s;outline:none}
+.form-group input:focus,.form-group select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,102,241,0.1)}
+.form-group input::placeholder{color:var(--text-dim)}
+.form-row{display:flex;gap:14px}
+.form-row .form-group{flex:1}
+.admin-user-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--accent-border-light)}
+.admin-user-row:last-child{border-bottom:none}
+.admin-user-info{display:flex;align-items:center;gap:12px}
+.admin-user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700}
+.admin-user-name{font-size:14px;color:var(--text)}
+.admin-user-meta{font-size:11px;color:var(--text-muted);margin-top:1px}
+.pagination{display:flex;align-items:center;justify-content:center;gap:4px;padding:16px 24px;border-top:1px solid var(--accent-border-light)}
+.pagination button{background:var(--bg-input);border:1px solid var(--accent-border);color:var(--text-secondary);padding:8px 12px;border-radius:8px;cursor:pointer;font-size:13px;font-family:inherit;transition:all .15s;min-width:36px;text-align:center}
+.pagination button:hover:not(:disabled){background:rgba(99,102,241,0.12);color:var(--accent-light);border-color:var(--accent)}
+.pagination button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.pagination button:disabled{opacity:.3;cursor:default}
+.pagination .page-info{font-size:13px;color:var(--text-muted);padding:0 8px}
+.bulk-bar{display:flex;align-items:center;gap:12px;padding:10px 24px;background:rgba(99,102,241,0.08);border-bottom:1px solid var(--accent-border);position:sticky;top:0;z-index:10}
+.bulk-bar span{font-size:13px;color:var(--text-secondary)}
+.bulk-bar .btn-danger{background:var(--danger-bg);border-color:rgba(239,68,68,0.3);color:var(--danger-text)}
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none}
+.toast{display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--toast-bg);backdrop-filter:blur(20px);border:1px solid var(--accent-border);border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,0.4);color:var(--text);font-size:13px;font-weight:500;min-width:280px;max-width:420px;animation:toastIn .3s ease;pointer-events:auto}
+.toast i{font-size:16px}
+.toast.success{border-color:rgba(5,150,105,0.4)}
+.toast.success i{color:#6ee7b7}
+.toast.error{border-color:rgba(239,68,68,0.4)}
+.toast.error i{color:var(--danger-text)}
+.toast.warning{border-color:rgba(245,158,11,0.4)}
+.toast.warning i{color:#fcd34d}
+.toast .toast-close{margin-left:auto;cursor:pointer;color:var(--text-muted);font-size:16px;background:none;border:none;padding:0 0 0 8px}
+.toast.out{animation:toastOut .25s ease forwards}
+@keyframes toastIn{from{opacity:0;transform:translateY(20px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes toastOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(10px)}}
+@media(max-width:700px){
+.header{padding:14px 16px}.header-brand h1{font-size:16px}.filter-bar,.admin-grid,.analytics-grid,.form-row{flex-direction:column}.filter-group,.filter-actions .btn{width:100%}
+table,thead,tbody,th,td,tr{display:block}
+thead tr{position:absolute;top:-9999px;left:-9999px}
+tr{padding:16px;margin-bottom:12px;background:var(--bg-card);border:1px solid var(--accent-border-light);border-radius:14px;box-shadow:var(--shadow)}
+td{border:none;padding:6px 0;position:relative;padding-left:50%;border-bottom:1px solid var(--accent-border-light)!important}
+td:last-child{border-bottom:none!important}
+td:before{content:attr(data-label);position:absolute;left:0;top:6px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--accent-light);width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+td .action-btns{opacity:1!important;padding-top:4px}
+td:first-child{padding-left:0;text-align:left;padding-bottom:8px}
+td:first-child:before{display:none}
+th:first-child,td:first-child{width:auto}
+tr:hover{background:var(--bg-card)}
+tbody tr:nth-child(even){background:var(--bg-card)}
+.pagination{flex-wrap:wrap}
+.pagination .page-info{width:100%;text-align:center;order:-1;margin-bottom:4px}
+.toast-container{left:16px;right:16px;bottom:16px}
+.toast{min-width:0}
+}
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--scrollbar);border-radius:10px}
+</style>
+</head>
+<body>
+<header class="header">
+<div class="header-brand">
+<div class="logo-icon"><i class="fa fa-database"></i></div>
+<h1>Data Extraction Portal</h1>
+</div>
+<div class="header-actions" style="display:flex;align-items:center;gap:12px">
+<button class="theme-toggle" id="themeToggle" title="Toggle theme"><i class="fa fa-moon"></i></button>
+<span style="font-size:13px;color:var(--text-muted)"><i class="fa fa-user" style="color:var(--accent-light);margin-right:6px"></i>{{ username }}</span>
+<a href="{{ url_for('logout') }}" class="btn btn-ghost btn-sm"><i class="fa fa-right-from-bracket"></i> Sign Out</a>
+</div>
+</header>
+<section class="hero">
+<h2>Lead Data Explorer</h2>
+<p>Search, filter, and manage your leads</p>
+</section>
+<div class="tab-bar">
+<a href="?tab=leads" class="tab-btn{% if tab=='leads' and not show_trash %} active{% endif %}"><i class="fa fa-table"></i> Leads</a>
+{% if user_role == 'admin' %}<a href="?tab=leads&trash=1" class="tab-btn{% if show_trash %} active{% endif %}"><i class="fa fa-trash"></i> Trash</a>{% endif %}
+<a href="?tab=admin" class="tab-btn{% if tab=='admin' %} active{% endif %}"><i class="fa fa-shield"></i> Admin</a>
+<a href="?tab=analytics" class="tab-btn{% if tab=='analytics' %} active{% endif %}"><i class="fa fa-chart-bar"></i> Analytics</a>
+{% if user_role == 'admin' %}<a href="?tab=activity" class="tab-btn{% if tab=='activity' %} active{% endif %}"><i class="fa fa-clock"></i> Activity</a>{% endif %}
+{% if user_role == 'admin' %}<a href="?tab=database" class="tab-btn{% if tab=='database' %} active{% endif %}"><i class="fa fa-database"></i> Database</a>{% endif %}
+</div>
+<div class="main-container">
+
+<!-- ===== LEADS TAB ===== -->
+<div class="tab-content{% if tab=='leads' and not show_trash %} active{% endif %}">
+<div class="filter-card">
+<form id="filterForm" method="GET" action="/" onsubmit="return false;">
+<input type="hidden" name="tab" value="leads">
+<div class="filter-bar">
+<div class="filter-group filter-group-wide">
+<label><i class="fa fa-search"></i> Search</label>
+<input type="text" id="searchInput" class="filter-input" placeholder="Search by name, email, or company..." autocomplete="off">
+</div>
+<div class="filter-group">
+<label><i class="fa fa-globe"></i> Country</label>
+<div class="country-select">
+<input type="text" id="country-search" class="filter-input" placeholder="Search countries..." autocomplete="off">
+<div class="country-options" id="country-options">
+{% for country in countries %}
+<div onmousedown="toggleCountry('{{ country }}')">{{ country }}</div>
+{% endfor %}
+</div>
+</div>
+</div>
+<div class="filter-group">
+<label><i class="fa fa-tag"></i> Status</label>
+<select id="statusFilter" class="filter-input" onchange="loadLeads()">
+<option value="">All</option>
+{% for s in status_choices %}
+<option value="{{ s }}"{% if selected_status == s %} selected{% endif %}>{{ s }}</option>
+{% endfor %}
+</select>
+</div>
+<div class="filter-actions">
+<button type="submit" class="btn btn-primary" onclick="loadLeads()"><i class="fa fa-search"></i> Filter</button>
+{% if user_role == 'admin' %}<button type="button" class="btn btn-add" onclick="openModal()"><i class="fa fa-plus"></i> Add Lead</button>{% endif %}
+{% if user_role == 'admin' %}<button type="button" class="btn btn-ghost" onclick="openBulkModal()"><i class="fa fa-upload"></i> Bulk Upload</button>{% endif %}
+{% if user_role == 'admin' %}<button type="button" class="btn btn-success" id="exportBtn" onclick="exportExcel()"><i class="fa fa-download"></i> Export Excel</button>{% endif %}
+</div>
+</div>
+<div class="tags" id="selected-countries" style="margin-top:8px">
+{% for country in selected_countries %}
+<span class="tag">{{ country }}<span onclick="removeCountry(this)">&times;</span><input type="hidden" name="country" value="{{ country }}"></span>
+{% endfor %}
+</div>
+</form>
+</div>
+
+<div class="table-card">
+<div class="table-header">
+<h3><i class="fa fa-table"></i> Leads</h3>
+<span class="record-count" id="recordCount"><i class="fa fa-database"></i> 0 records</span>
+</div>
+{% if user_role == 'admin' %}<div class="bulk-bar" id="bulkBar">
+<span id="bulkCount">0 selected</span>
+<button class="btn btn-danger btn-sm" id="deleteSelectedBtn" onclick="deleteSelected()"><i class="fa fa-trash"></i> Delete Selected</button>
+<button class="btn btn-ghost btn-sm" id="clearSelectionBtn" onclick="clearSelection()" style="display:none">Clear</button>
+</div>{% endif %}
+<div class="table-wrap" id="leadsTableWrap">
+<table>
+<thead><tr id="tableHeaders">
+{% if user_role == 'admin' %}<th><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this.checked)"></th>{% endif %}
+<th style="width:40px;text-align:center">#</th>
+<th class="sortable" data-sort="salutation" onclick="sortBy('salutation')">Salutation <i class="fa fa-sort"></i></th>
+<th class="sortable" data-sort="first_name" onclick="sortBy('first_name')">First Name <i class="fa fa-sort"></i></th>
+<th class="sortable" data-sort="last_name" onclick="sortBy('last_name')">Last Name <i class="fa fa-sort"></i></th>
+<th class="sortable" data-sort="email" onclick="sortBy('email')">Email <i class="fa fa-sort"></i></th>
+<th class="sortable" data-sort="job_titles" onclick="sortBy('job_titles')">Job Titles <i class="fa fa-sort"></i></th>
+<th class="sortable" data-sort="company_name" onclick="sortBy('company_name')">Company <i class="fa fa-sort"></i></th>
+<th class="sortable" data-sort="country" onclick="sortBy('country')">Country <i class="fa fa-sort"></i></th>
+<th class="sortable" data-sort="status" onclick="sortBy('status')">Status <i class="fa fa-sort"></i></th>
+{% if user_role == 'admin' %}<th style="width:80px;text-align:center">Actions</th>{% endif %}
+</tr></thead>
+<tbody id="leadsBody">
+<tr class="empty-state"><td colspan="{{ 12 if user_role == 'admin' else 10 }}"><div class="empty-icon"><i class="fa fa-spinner fa-spin"></i></div><h3>Loading...</h3></td></tr>
+</tbody>
+</table>
+</div>
+<div class="pagination" id="pagination"></div>
+<div class="sticky-bar">
+<span class="total" id="totalLabel"><strong>0</strong> leads found</span>
+<span id="bottomBulkActions" style="display:none;align-items:center;gap:12px">
+<span id="bottomBulkCount" style="font-size:13px;color:var(--text-secondary)">0 selected</span>
+<button class="btn btn-danger btn-sm" onclick="deleteSelected()"><i class="fa fa-trash"></i> Delete Selected</button>
+<button class="btn btn-ghost btn-sm" onclick="clearSelection()">Clear</button>
+</span>
+</div>
+</div>
+</div>
+
+<!-- ===== TRASH TAB ===== -->
+{% if user_role == 'admin' %}
+<div class="tab-content{% if show_trash %} active{% endif %}">
+<div class="table-card">
+<div class="table-header">
+<h3><i class="fa fa-trash"></i> Trash — Deleted Leads</h3>
+<span class="record-count" id="trashCount"><i class="fa fa-database"></i> {{ trash_data|length if trash_data else 0 }} records</span>
+</div>
+<div class="table-wrap">
+<table>
+<thead><tr>
+<th style="width:40px;text-align:center">#</th>
+<th>Salutation</th>
+<th>First Name</th>
+<th>Last Name</th>
+<th>Email</th>
+<th>Job Titles</th>
+<th>Company</th>
+<th>Country</th>
+<th>Status</th>
+<th style="width:100px;text-align:center">Actions</th>
+</tr></thead>
+<tbody id="trashBody">
+{% if trash_data %}
+{% for r in trash_data %}
+<tr>
+<td style="text-align:center;color:var(--text-muted);font-size:12px">{{ loop.index }}</td>
+<td data-label="Salutation">{{ r.Salutation or '' }}</td>
+<td data-label="First Name">{{ r['First Name'] or '' }}</td>
+<td data-label="Last Name">{{ r['Last Name'] or '' }}</td>
+<td data-label="Email">{{ r.Email or '' }}</td>
+<td data-label="Job Titles">{{ r['Job Titles'] or '' }}</td>
+<td data-label="Company">{{ r['Company Name'] or '' }}</td>
+<td data-label="Country">{{ r.Country or '' }}</td>
+<td data-label="Status"><span class="role-badge status Deleted">Deleted</span></td>
+<td data-label="Actions"><div class="action-btns" style="justify-content:center;opacity:1"><button class="btn btn-success btn-sm" onclick="restoreLeadFromTrash('{{ r.rowid if r.rowid else '' }}')" title="Restore"><i class="fa fa-undo"></i></button></div></td>
+</tr>
+{% endfor %}
+{% else %}
+<tr class="empty-state"><td colspan="10"><div class="empty-icon"><i class="fa fa-inbox"></i></div><h3>Trash is empty</h3></td></tr>
+{% endif %}
+</tbody>
+</table>
+</div>
+</div>
+</div>
+{% endif %}
+
+<!-- ===== ADMIN TAB ===== -->
+<div class="tab-content{% if tab=='admin' %} active{% endif %}">
+<div class="admin-grid">
+<div class="admin-card">
+<h3><i class="fa fa-users"></i> Users</h3>
+{% if users %}
+{% for u in users %}
+<div class="admin-user-row">
+<div class="admin-user-info">
+<div class="admin-user-avatar">{{ u.username[0]|upper }}</div>
+<div>
+<div class="admin-user-name">{{ u.username }}</div>
+<div class="admin-user-meta"><span class="role-badge {{ u.role }}">{{ u.role }}</span> &middot; {{ u.created_at }}</div>
+</div>
+</div>
+{% if u.id != 1 %}
+<button class="btn btn-danger btn-sm" onclick="deleteUser({{ u.id }}, '{{ u.username|e }}')"><i class="fa fa-trash"></i></button>
+{% endif %}
+</div>
+{% endfor %}
+{% else %}
+<p style="color:var(--text-muted);font-size:13px">No users found.</p>
+{% endif %}
+</div>
+
+<div class="admin-card">
+<h3><i class="fa fa-user-plus"></i> Create User</h3>
+<form id="createUserForm" onsubmit="return createUser(event)">
+<div class="form-group">
+<label>Username <span class="req">*</span></label>
+<input type="text" id="u_username" placeholder="Username" required>
+</div>
+<div class="form-group">
+<label>Password <span class="req">*</span></label>
+<input type="password" id="u_password" placeholder="Min 4 characters" required>
+</div>
+<div class="form-group">
+<label>Role</label>
+<select id="u_role">
+<option value="viewer">Viewer</option>
+<option value="editor">Editor</option>
+<option value="admin">Admin</option>
+</select>
+</div>
+<button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Create User</button>
+</form>
+<div id="createUserMsg" style="margin-top:10px;font-size:13px"></div>
+</div>
+</div>
+</div>
+
+<!-- ===== ANALYTICS TAB ===== -->
+<div class="tab-content{% if tab=='analytics' %} active{% endif %}">
+{% if analytics %}
+<div class="analytics-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+  <div class="analytics-card" style="background:var(--bg-card);backdrop-filter:blur(16px);border:1px solid var(--accent-border-light);border-radius:20px;padding:24px;box-shadow:var(--shadow);transition:background .3s">
+    <h3 style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px"><i class="fa fa-globe" style="color:var(--accent-light);margin-right:8px"></i> Leads per Country</h3>
+    <div style="height:260px"><canvas id="countryChart"></canvas></div>
+  </div>
+
+  <div class="analytics-card" style="background:var(--bg-card);backdrop-filter:blur(16px);border:1px solid var(--accent-border-light);border-radius:20px;padding:24px;box-shadow:var(--shadow);transition:background .3s">
+    <h3 style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px"><i class="fa fa-briefcase" style="color:var(--accent-light);margin-right:8px"></i> Top Job Titles</h3>
+    <div style="height:320px"><canvas id="jobTitlesChart"></canvas></div>
+  </div>
+
+  <div class="analytics-card" style="background:var(--bg-card);backdrop-filter:blur(16px);border:1px solid var(--accent-border-light);border-radius:20px;padding:24px;box-shadow:var(--shadow);transition:background .3s">
+    <h3 style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px"><i class="fa fa-chart-line" style="color:var(--accent-light);margin-right:8px"></i> Leads over Time</h3>
+    <div style="height:260px"><canvas id="timeChart"></canvas></div>
+  </div>
+
+  <div class="analytics-card" style="background:var(--bg-card);backdrop-filter:blur(16px);border:1px solid var(--accent-border-light);border-radius:20px;padding:24px;box-shadow:var(--shadow);transition:background .3s">
+    <h3 style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px"><i class="fa fa-chart-pie" style="color:var(--accent-light);margin-right:8px"></i> Status Breakdown</h3>
+    <div style="height:260px"><canvas id="statusChart"></canvas></div>
+  </div>
+</div>
+{% else %}
+<div class="empty-state">
+  <div class="empty-icon"><i class="fa fa-chart-simple"></i></div>
+  <h3>No analytics available</h3>
+  <p>Import leads to see data analysis.</p>
+</div>
+{% endif %}
+</div>
+
+<!-- ===== ACTIVITY TAB ===== -->
+{% if user_role == 'admin' %}
+<div class="tab-content{% if tab=='activity' %} active{% endif %}">
+<div class="table-card">
+<div class="table-header">
+<h3><i class="fa fa-clock"></i> Activity Log</h3>
+<span class="record-count"><i class="fa fa-database"></i> Last 200 entries</span>
+</div>
+<div class="table-wrap">
+<table>
+<thead><tr>
+<th style="width:160px">Timestamp</th>
+<th>User</th>
+<th>Action</th>
+<th>Entity</th>
+<th>Entity ID</th>
+<th>Details</th>
+</tr></thead>
+<tbody id="auditBody">
+{% if audit_entries %}
+{% for a in audit_entries %}
+<tr>
+<td style="color:var(--text-muted);font-size:11px">{{ a.created_at }}</td>
+<td>{{ a.username }}</td>
+<td><span class="role-badge" style="font-size:10px;background:rgba(99,102,241,0.1);color:var(--accent-light)">{{ a.action }}</span></td>
+<td>{{ a.entity_type }}</td>
+<td>{{ a.entity_id }}</td>
+<td style="font-size:11px;max-width:200px;overflow:hidden;text-overflow:ellipsis">{{ a.details }}</td>
+</tr>
+{% endfor %}
+{% else %}
+<tr class="empty-state"><td colspan="6"><div class="empty-icon"><i class="fa fa-inbox"></i></div><h3>No activity yet</h3></td></tr>
+{% endif %}
+</tbody>
+</table>
+</div>
+</div>
+</div>
+{% endif %}
+
+<!-- ===== DATABASE TAB ===== -->
+{% if user_role == 'admin' %}
+<div class="tab-content{% if tab=='database' %} active{% endif %}">
+<div class="admin-grid">
+<div class="admin-card">
+<h3><i class="fa fa-server"></i> Active Database</h3>
+<div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">
+<div style="padding:8px 0"><span style="color:var(--text-muted)">File:</span> <strong>{{ current_db }}</strong></div>
+<div style="padding:8px 0"><span style="color:var(--text-muted)">Path:</span> <code style="font-size:12px;color:var(--accent-light);word-break:break-all">{{ db_path }}</code></div>
+</div>
+<div id="dbStats" style="font-size:13px;color:var(--text-secondary)"></div>
+</div>
+
+<div class="admin-card">
+<h3><i class="fa fa-plus-circle"></i> Create Database</h3>
+<form id="createDbForm" onsubmit="return createDatabase(event)">
+<div class="form-group">
+<label>Database Name <span class="req">*</span></label>
+<input type="text" id="dbNameInput" placeholder="e.g. my_data.db" required pattern="[a-zA-Z0-9_\-]+\.db" title="Only letters, numbers, underscores, hyphens">
+<div style="font-size:11px;color:var(--text-muted);margin-top:4px">Only letters, numbers, underscores, and hyphens</div>
+</div>
+<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> Create</button>
+</form>
+<div id="createDbMsg" style="margin-top:10px;font-size:13px"></div>
+</div>
+
+<div class="admin-card" style="grid-column:1/-1">
+<h3><i class="fa fa-list"></i> Available Databases</h3>
+<div id="dbListContainer">
+{% if db_list %}
+{% for db in db_list %}
+<div class="admin-user-row" data-db="{{ db }}">
+<div class="admin-user-info">
+<div class="admin-user-avatar"><i class="fa fa-database"></i></div>
+<div>
+<div class="admin-user-name">{{ db }}{% if db == 'portal_master.db' %} <span class="role-badge admin" style="font-size:10px;vertical-align:middle">Master</span>{% endif %}</div>
+<div class="admin-user-meta" style="font-size:11px;color:var(--text-muted)">{{ db }}</div>
+</div>
+</div>
+<div style="display:flex;gap:6px">
+{% if db == current_db %}
+<span class="role-badge admin" style="font-size:11px">Active</span>
+{% else %}
+<button class="btn btn-primary btn-sm" onclick="switchDatabase('{{ db }}')"><i class="fa fa-arrow-right"></i> Switch</button>
+{% if db != 'portal_master.db' %}
+<button class="btn btn-secondary btn-sm" onclick="renameDatabase('{{ db }}')"><i class="fa fa-pen"></i></button>
+<button class="btn btn-danger btn-sm" onclick="deleteDatabase('{{ db }}')"><i class="fa fa-trash"></i></button>
+{% endif %}
+{% endif %}
+</div>
+</div>
+{% endfor %}
+{% else %}
+<p style="color:var(--text-muted);font-size:13px">No database files found.</p>
+{% endif %}
+</div>
+</div>
+</div>
+</div>
+{% endif %}
+
+</div><!-- main-container -->
+
+<!-- ===== BULK UPLOAD MODAL ===== -->
+<div class="modal-overlay" id="bulkModalOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);z-index:1000;justify-content:center;align-items:center" onclick="if(event.target===this)closeBulkModal()">
+<div style="background:var(--toast-bg);backdrop-filter:blur(20px);border:1px solid var(--accent-border);border-radius:24px;padding:28px 32px;width:500px;max-width:94vw;box-shadow:0 25px 60px rgba(0,0,0,0.5);animation:slideUp .3s ease">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+<h2 style="font-size:18px;font-weight:700;color:var(--text)"><i class="fa fa-upload" style="color:var(--accent-light);margin-right:10px"></i> Bulk Upload Leads</h2>
+<button onclick="closeBulkModal()" style="background:none;border:none;color:var(--text-muted);font-size:22px;cursor:pointer;padding:4px 8px;border-radius:8px">&times;</button>
+</div>
+<div style="font-size:11px;color:var(--text-muted);margin-bottom:12px;padding:8px 12px;background:var(--bg-input);border-radius:8px"><i class="fa fa-server" style="color:var(--accent-light);margin-right:6px"></i> Database: <strong>{{ current_db }}</strong></div>
+<p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">Upload an <strong>.xlsx</strong>, <strong>.xls</strong>, or <strong>.csv</strong> file with columns matching: Salutation, First Name, Last Name, Email, Job Titles, Company Name, Country.</p>
+<div id="bulkDropZone" style="border:2px dashed rgba(99,102,241,0.2);border-radius:16px;padding:40px 20px;text-align:center;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='#6366f1'" onmouseout="this.style.borderColor='rgba(99,102,241,0.2)'" onclick="document.getElementById('bulkFileInput').click()">
+<i class="fa fa-cloud-arrow-up" style="font-size:40px;color:rgba(99,102,241,0.3);margin-bottom:12px;display:block"></i>
+<p style="font-size:14px;color:var(--text-secondary)">Click to select or drag &amp; drop file</p>
+<p style="font-size:11px;color:var(--text-dim);margin-top:6px">.xlsx, .xls, .csv</p>
+<input type="file" id="bulkFileInput" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleBulkFile(this.files[0])">
+</div>
+<div id="bulkResult" style="margin-top:16px;font-size:13px;display:none"></div>
+<div style="display:flex;justify-content:flex-end;gap:12px;margin-top:20px;padding-top:16px;border-top:1px solid var(--accent-border-light)">
+<button class="btn btn-ghost" onclick="closeBulkModal()">Cancel</button>
+</div>
+</div>
+</div>
+
+<!-- ===== CONFIRM MODAL ===== -->
+<div class="modal-overlay" id="confirmOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);z-index:1100;justify-content:center;align-items:center" onclick="if(event.target===this)closeConfirm()">
+<div style="background:var(--toast-bg);backdrop-filter:blur(20px);border:1px solid var(--accent-border);border-radius:24px;padding:28px 32px;width:400px;max-width:90vw;box-shadow:0 25px 60px rgba(0,0,0,0.5);animation:slideUp .3s ease;text-align:center">
+<div style="font-size:42px;margin-bottom:10px"><i class="fa fa-triangle-exclamation" style="color:var(--danger)"></i></div>
+<h3 style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:6px" id="confirmTitle">Confirm</h3>
+<p style="font-size:14px;color:var(--text-secondary);margin-bottom:22px" id="confirmMsg">Are you sure?</p>
+<div style="display:flex;gap:12px;justify-content:center">
+<button class="btn btn-ghost" onclick="closeConfirm()">Cancel</button>
+<button class="btn btn-danger" id="confirmActionBtn" onclick="confirmAction()"><i class="fa fa-trash"></i> Delete</button>
+</div>
+</div>
+</div>
+
+<!-- ===== ADD LEAD MODAL ===== -->
+<div class="modal-overlay" id="modalOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);z-index:1000;justify-content:center;align-items:center" onclick="if(event.target===this)closeModal()">
+<div style="background:var(--toast-bg);backdrop-filter:blur(20px);border:1px solid var(--accent-border);border-radius:24px;padding:28px 32px;width:480px;max-width:94vw;max-height:90vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,0.5);animation:slideUp .3s ease">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+<h2 style="font-size:18px;font-weight:700;color:var(--text)" id="modalTitle"><i class="fa fa-user-plus" style="color:var(--accent-light);margin-right:10px"></i> New Lead</h2>
+<button onclick="closeModal()" style="background:none;border:none;color:var(--text-muted);font-size:22px;cursor:pointer;padding:4px 8px;border-radius:8px">&times;</button>
+</div>
+<div style="font-size:11px;color:var(--text-muted);margin-bottom:14px;padding:8px 12px;background:var(--bg-input);border-radius:8px"><i class="fa fa-server" style="color:var(--accent-light);margin-right:6px"></i> Database: <strong>{{ current_db }}</strong></div>
+<input type="hidden" id="editLeadId" value="">
+<div class="form-row">
+<div class="form-group"><label>Salutation</label><select id="f_salutation"><option value="">-- Select --</option><option value="Mr.">Mr.</option><option value="Ms.">Ms.</option><option value="Mrs.">Mrs.</option><option value="Dr.">Dr.</option></select></div>
+<div class="form-group"><label>Country</label><select id="f_country"><option value="">-- Select --</option>{% for country in countries %}<option value="{{ country }}">{{ country }}</option>{% endfor %}</select></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>First Name <span class="req">*</span></label><input type="text" id="f_first_name" placeholder="First Name"></div>
+<div class="form-group"><label>Last Name <span class="req">*</span></label><input type="text" id="f_last_name" placeholder="Last Name"></div>
+</div>
+<div class="form-group"><label>Email</label><input type="text" id="f_email" placeholder="email@example.com"></div>
+<div class="form-row">
+<div class="form-group"><label>Job Titles</label><input type="text" id="f_job_titles" placeholder="Job title"></div>
+<div class="form-group"><label>Company Name</label><input type="text" id="f_company_name" placeholder="Company"></div>
+</div>
+<div style="display:flex;justify-content:flex-end;gap:12px;margin-top:20px;padding-top:16px;border-top:1px solid var(--accent-border-light)">
+<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+<button class="btn btn-success" id="modalSaveBtn" onclick="submitLead()"><i class="fa fa-save"></i> Save Lead</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ===== TOAST CONTAINER ===== -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script>
+// ─── State ───
+const IS_ADMIN = {{ 'true' if user_role == 'admin' else 'false' }};
+const IS_VIEWER = {{ 'true' if user_role == 'viewer' else 'false' }};
+let currentPage = 1;
+let pageSize = 50;
+let sortField = 'first_name';
+let sortDir = 'asc';
+let searchQuery = '';
+let totalRecords = 0;
+let selectedIds = new Set();
+let allIds = [];
+
+// ─── Toast system ───
+function toast(msg, type = 'success') {
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  const icons = { success: 'fa-circle-check', error: 'fa-circle-exclamation', warning: 'fa-triangle-exclamation' };
+  const icon = icons[type] || 'fa-circle-info';
+  t.innerHTML = `<i class="fa ${icon}"></i> ${msg} <button class="toast-close" onclick="this.parentElement.classList.add('out');setTimeout(()=>this.parentElement.remove(),250)">&times;</button>`;
+  c.appendChild(t);
+  setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 250); }, 3500);
+}
+
+// ─── Theme toggle ───
+(function() {
+  const saved = localStorage.getItem('theme');
+  if (saved === 'light') document.documentElement.setAttribute('data-theme', 'light');
+  const btn = document.getElementById('themeToggle');
+  if (btn) {
+    const icon = btn.querySelector('i');
+    const updateIcon = () => {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      icon.className = isLight ? 'fa fa-sun' : 'fa fa-moon';
+    };
+    updateIcon();
+    btn.onclick = () => {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      document.documentElement.setAttribute('data-theme', isLight ? '' : 'light');
+      localStorage.setItem('theme', isLight ? '' : 'light');
+      updateIcon();
+    };
+  }
+})();
+
+// ─── Country filter ───
+const searchInput = document.getElementById('country-search');
+const optionsDiv = document.getElementById('country-options');
+const selectedDiv = document.getElementById('selected-countries');
+if (searchInput) {
+  searchInput.addEventListener('focus', () => optionsDiv.style.display = 'block');
+  searchInput.addEventListener('input', () => {
+    const f = searchInput.value.toLowerCase();
+    optionsDiv.querySelectorAll('div').forEach(o => { o.style.display = o.innerText.toLowerCase().includes(f) ? 'block' : 'none'; });
+  });
+  document.addEventListener('click', e => { if (!e.target.closest('.country-select')) optionsDiv.style.display = 'none'; });
+}
+function toggleCountry(c) {
+  if ([...selectedDiv.querySelectorAll('input')].some(i => i.value === c)) return;
+  const s = document.createElement('span'); s.className = 'tag';
+  s.innerHTML = c + ' <span onclick="this.parentElement.remove()">&times;</span>';
+  const h = document.createElement('input'); h.type = 'hidden'; h.name = 'country'; h.value = c;
+  s.appendChild(h); selectedDiv.appendChild(s); optionsDiv.style.display = 'none';
+}
+function removeCountry(el) { el.parentNode.remove(); }
+function getSelectedCountries() {
+  return [...selectedDiv.querySelectorAll('input')].map(i => i.value);
+}
+
+// ─── Data Loading ───
+function buildParams() {
+  const params = new URLSearchParams();
+  params.set('limit', pageSize);
+  params.set('offset', (currentPage - 1) * pageSize);
+  params.set('sort', sortField);
+  params.set('dir', sortDir);
+  const countries = getSelectedCountries();
+  if (countries.length === 1) params.set('country', countries[0]);
+  if (searchQuery) params.set('search', searchQuery);
+  const statusVal = document.getElementById('statusFilter');
+  if (statusVal && statusVal.value) params.set('status', statusVal.value);
+  return params;
+}
+
+function exportExcel() {
+  const countries = getSelectedCountries();
+  const params = new URLSearchParams();
+  params.set('tab', 'leads');
+  params.set('export', '1');
+  countries.forEach(c => params.append('country', c));
+  const statusVal = document.getElementById('statusFilter');
+  if (statusVal && statusVal.value) params.set('status', statusVal.value);
+  window.location.href = '/?' + params.toString();
+}
+
+function loadLeads() {
+  searchQuery = document.getElementById('searchInput').value.trim();
+  currentPage = 1;
+  fetchLeads();
+}
+
+function fetchLeads() {
+  const params = buildParams();
+  const tbody = document.getElementById('leadsBody');
+  tbody.innerHTML = '<tr class="empty-state"><td colspan="10"><div class="empty-icon"><i class="fa fa-spinner fa-spin"></i></div><h3>Loading...</h3></td></tr>';
+
+  fetch('/api/leads?' + params.toString())
+    .then(r => r.json())
+    .then(data => {
+      totalRecords = data.total;
+      renderTable(data.data);
+      renderPagination();
+      updateRecordCount();
+    })
+    .catch(() => {
+      tbody.innerHTML = '<tr class="empty-state"><td colspan="' + COL_COUNT + '"><div class="empty-icon"><i class="fa fa-circle-exclamation" style="color:var(--danger-text)"></i></div><h3>Failed to load leads</h3><p>Check your connection and try again.</p></td></tr>';
+    });
+}
+
+const COL_COUNT = IS_ADMIN ? 12 : 10;
+
+function statusBadge(s) {
+  const st = s || 'New';
+  return '<span class="role-badge status ' + st + '">' + st + '</span>';
+}
+
+function renderTable(rows) {
+  const tbody = document.getElementById('leadsBody');
+  allIds = rows.map(r => r.id);
+  if (!rows.length) {
+    tbody.innerHTML = '<tr class="empty-state"><td colspan="' + COL_COUNT + '"><div class="empty-icon"><i class="fa fa-inbox"></i></div><h3>No leads found</h3><p>Try adjusting your search or filter criteria.</p></td></tr>';
+    return;
+  }
+  tbody.innerHTML = rows.map(function(r, i) {
+    const checked = selectedIds.has(r.id) ? 'checked' : '';
+    const rowNum = (currentPage - 1) * pageSize + i + 1;
+    let cells = '';
+    if (IS_ADMIN) cells += '<td><input type="checkbox" class="row-check" data-id="' + r.id + '" ' + checked + ' onchange="toggleRow(' + r.id + ', this.checked)"></td>';
+    cells += '<td style="text-align:center;color:var(--text-muted);font-size:12px">' + rowNum + '</td>';
+    cells += '<td data-label="Salutation">' + esc(r.salutation) + '</td>';
+    cells += '<td data-label="First Name">' + esc(r.first_name) + '</td>';
+    cells += '<td data-label="Last Name">' + esc(r.last_name) + '</td>';
+    cells += '<td data-label="Email">' + esc(r.email) + '</td>';
+    cells += '<td data-label="Job Titles">' + esc(r.job_titles) + '</td>';
+    cells += '<td data-label="Company">' + esc(r.company_name) + '</td>';
+    cells += '<td data-label="Country">' + esc(r.country) + '</td>';
+    cells += '<td data-label="Status">' + statusBadge(r.status) + '</td>';
+    if (IS_ADMIN) cells += '<td data-label="Actions"><div class="action-btns" style="justify-content:center"><button class="btn btn-ghost btn-icon" onclick="editLead(' + r.id + ')" title="Edit"><i class="fa fa-pen"></i></button><button class="btn btn-danger btn-icon" onclick="deleteLead(' + r.id + ')" title="Delete"><i class="fa fa-trash"></i></button></div></td>';
+    return '<tr class="' + (checked ? 'selected' : '') + '" data-id="' + r.id + '">' + cells + '</tr>';
+  }).join('');
+  if (IS_ADMIN) document.getElementById('selectAll').checked = rows.length > 0 && rows.every(r => selectedIds.has(r.id));
+  if (IS_ADMIN) updateBulkBar();
+}
+
+function esc(s) {
+  if (!s) return '';
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+// ─── Pagination ───
+function renderPagination() {
+  const el = document.getElementById('pagination');
+  const totalPages = Math.max(1, Math.ceil(totalRecords / pageSize));
+  if (totalPages <= 1 && totalRecords <= pageSize) { el.innerHTML = ''; return; }
+
+  let html = '';
+  html += `<button onclick="goToPage(${currentPage - 1})" ${currentPage <= 1 ? 'disabled' : ''}><i class="fa fa-chevron-left"></i></button>`;
+
+  const maxVisible = 5;
+  let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+  let end = Math.min(totalPages, start + maxVisible - 1);
+  if (end - start + 1 < maxVisible) start = Math.max(1, end - maxVisible + 1);
+
+  if (start > 1) { html += `<button onclick="goToPage(1)">1</button>`; if (start > 2) html += `<span class="page-info">...</span>`; }
+  for (let i = start; i <= end; i++) {
+    html += `<button class="${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+  }
+  if (end < totalPages) { if (end < totalPages - 1) html += `<span class="page-info">...</span>`; html += `<button onclick="goToPage(${totalPages})">${totalPages}</button>`; }
+
+  html += `<button onclick="goToPage(${currentPage + 1})" ${currentPage >= totalPages ? 'disabled' : ''}><i class="fa fa-chevron-right"></i></button>`;
+  html += `<span class="page-info">${totalRecords} total</span>`;
+  el.innerHTML = html;
+}
+
+function goToPage(page) {
+  const totalPages = Math.ceil(totalRecords / pageSize);
+  if (page < 1 || page > totalPages) return;
+  currentPage = page;
+  fetchLeads();
+}
+
+function updateRecordCount() {
+  document.getElementById('recordCount').innerHTML = `<i class="fa fa-database"></i> ${totalRecords} records`;
+  document.getElementById('totalLabel').innerHTML = `<strong>${totalRecords}</strong> leads found`;
+}
+
+// ─── Sorting ───
+function sortBy(field) {
+  if (sortField === field) {
+    sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortField = field;
+    sortDir = 'asc';
+  }
+  document.querySelectorAll('#tableHeaders .sortable').forEach(th => th.classList.remove('active'));
+  const active = document.querySelector(`#tableHeaders .sortable[data-sort="${field}"]`);
+  if (active) active.classList.add('active');
+  currentPage = 1;
+  fetchLeads();
+}
+
+// ─── Bulk select ───
+function toggleRow(id, checked) {
+  if (checked) selectedIds.add(id); else selectedIds.delete(id);
+  const row = document.querySelector(`tr[data-id="${id}"]`);
+  if (row) row.classList.toggle('selected', checked);
+  updateBulkBar();
+  updateSelectAll();
+}
+
+function toggleSelectAll(checked) {
+  allIds.forEach(id => {
+    if (checked) selectedIds.add(id); else selectedIds.delete(id);
+    const row = document.querySelector(`tr[data-id="${id}"]`);
+    const cb = document.querySelector(`.row-check[data-id="${id}"]`);
+    if (row) row.classList.toggle('selected', checked);
+    if (cb) cb.checked = checked;
+  });
+  updateBulkBar();
+}
+
+function updateSelectAll() {
+  const cb = document.getElementById('selectAll');
+  if (allIds.length && allIds.every(id => selectedIds.has(id))) cb.checked = true;
+  else cb.checked = false;
+}
+
+function updateBulkBar() {
+  const count = document.getElementById('bulkCount');
+  const delBtn = document.getElementById('deleteSelectedBtn');
+  const clearBtn = document.getElementById('clearSelectionBtn');
+  const bottomActions = document.getElementById('bottomBulkActions');
+  const bottomCount = document.getElementById('bottomBulkCount');
+  const n = selectedIds.size;
+  if (n > 0) {
+    count.textContent = n + ' selected';
+    delBtn.disabled = false;
+    clearBtn.style.display = '';
+    if (bottomActions) { bottomActions.style.display = 'flex'; bottomCount.textContent = n + ' selected'; }
+  } else {
+    count.textContent = '0 selected';
+    delBtn.disabled = true;
+    clearBtn.style.display = 'none';
+    if (bottomActions) { bottomActions.style.display = 'none'; }
+  }
+}
+
+function clearSelection() {
+  selectedIds.clear();
+  document.querySelectorAll('.row-check').forEach(cb => cb.checked = false);
+  document.querySelectorAll('tr.selected').forEach(r => r.classList.remove('selected'));
+  document.getElementById('selectAll').checked = false;
+  updateBulkBar();
+}
+
+function deleteSelected() {
+  const n = selectedIds.size;
+  if (!n) return;
+  showConfirm(`Delete ${n} selected lead${n > 1 ? 's' : ''}?`, function() {
+    fetch('/api/leads/bulk-delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ids: [...selectedIds] })
+    }).then(r => r.json()).then(d => {
+      if (d.success) { toast(`Deleted ${d.deleted} lead(s)`); selectedIds.clear(); fetchLeads(); }
+      else { toast(d.error || 'Delete failed', 'error'); }
+    }).catch(() => toast('Network error', 'error'));
+  }, 'Delete');
+}
+
+// ─── Row actions ───
+function deleteLead(id) {
+  showConfirm('Delete this lead?', function() {
+    fetch('/api/leads/' + id, { method: 'DELETE' })
+      .then(r => r.json()).then(d => {
+        if (d.success) { toast('Lead moved to trash'); selectedIds.delete(id); fetchLeads(); }
+        else { toast(d.error || 'Delete failed', 'error'); }
+      }).catch(() => toast('Network error', 'error'));
+  }, 'Delete');
+}
+
+// ─── Restore from trash ───
+function restoreLeadFromTrash(rowid) {
+  if (!rowid) return;
+  showConfirm('Restore this lead?', function() {
+    fetch('/api/leads/' + rowid + '/restore', { method: 'POST' })
+      .then(r => r.json()).then(d => {
+        if (d.success) { toast('Lead restored'); location.reload(); }
+        else { toast(d.error || 'Restore failed', 'error'); }
+      }).catch(() => toast('Network error', 'error'));
+  }, 'Restore', 'btn-success', '<i class="fa fa-recycle"></i>');
+}
+
+// ─── Edit lead ───
+function editLead(id) {
+  fetch('/api/leads?limit=1&offset=0&sort=id&dir=asc&search=' + encodeURIComponent(id + ''))
+    .then(r => r.json()).then(data => {
+      openEditModal(id);
+    }).catch(() => toast('Failed to load lead data', 'error'));
+}
+
+function openEditModal(id) {
+  const params = buildParams();
+  params.set('limit', pageSize);
+  params.set('offset', (currentPage - 1) * pageSize);
+  fetch('/api/leads?' + params.toString())
+    .then(r => r.json()).then(data => {
+      const lead = data.data.find(d => d.id === id);
+      if (!lead) { toast('Lead not found on current page', 'error'); return; }
+      document.getElementById('editLeadId').value = id;
+      document.getElementById('f_salutation').value = lead.salutation || '';
+      document.getElementById('f_first_name').value = lead.first_name || '';
+      document.getElementById('f_last_name').value = lead.last_name || '';
+      document.getElementById('f_email').value = lead.email || '';
+      document.getElementById('f_job_titles').value = lead.job_titles || '';
+      document.getElementById('f_company_name').value = lead.company_name || '';
+      document.getElementById('f_country').value = lead.country || '';
+      document.getElementById('modalTitle').innerHTML = '<i class="fa fa-pen" style="color:var(--accent-light);margin-right:10px"></i> Edit Lead';
+      document.getElementById('modalSaveBtn').innerHTML = '<i class="fa fa-save"></i> Update Lead';
+      openModal();
+    }).catch(() => toast('Failed to load lead', 'error'));
+}
+
+// ─── Lead modal (add/edit) ───
+function openModal() {
+  document.getElementById('modalOverlay').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').style.display = 'none';
+  document.body.style.overflow = '';
+  document.getElementById('editLeadId').value = '';
+  document.getElementById('modalTitle').innerHTML = '<i class="fa fa-user-plus" style="color:var(--accent-light);margin-right:10px"></i> New Lead';
+  document.getElementById('modalSaveBtn').innerHTML = '<i class="fa fa-save"></i> Save Lead';
+  ['f_salutation','f_first_name','f_last_name','f_email','f_job_titles','f_company_name','f_country'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeModal(); closeBulkModal(); closeConfirm(); } });
+
+function submitLead() {
+  const f = ['salutation','first_name','last_name','email','job_titles','company_name','country'];
+  const ids = ['f_salutation','f_first_name','f_last_name','f_email','f_job_titles','f_company_name','f_country'];
+  const body = {};
+  f.forEach((k, i) => {
+    const v = document.getElementById(ids[i]).value.trim();
+    if (v) body[k] = v;
+  });
+  if (!body.first_name || !body.last_name) { toast('First Name and Last Name are required', 'error'); return; }
+
+  const editId = document.getElementById('editLeadId').value;
+  const btn = document.getElementById('modalSaveBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Saving...';
+
+  const url = editId ? ('/api/leads/' + editId) : '/api/leads';
+  const method = editId ? 'PUT' : 'POST';
+
+  fetch(url, { method, headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) })
+    .then(r => r.json()).then(d => {
+      if (d.success || d.message) {
+        toast(editId ? 'Lead updated' : 'Lead created');
+        closeModal();
+        fetchLeads();
+      } else {
+        toast(d.error || 'Failed', 'error');
+        btn.disabled = false;
+        btn.innerHTML = editId ? '<i class="fa fa-save"></i> Update Lead' : '<i class="fa fa-save"></i> Save Lead';
+      }
+    }).catch(() => {
+      toast('Network error', 'error');
+      btn.disabled = false;
+      btn.innerHTML = editId ? '<i class="fa fa-save"></i> Update Lead' : '<i class="fa fa-save"></i> Save Lead';
+    });
+}
+
+// ─── Confirm modal ───
+let confirmCallback = null;
+function showConfirm(msg, callback, btnLabel, btnClass, btnIcon) {
+  document.getElementById('confirmMsg').textContent = msg;
+  const btn = document.getElementById('confirmActionBtn');
+  btn.innerHTML = (btnIcon || '<i class="fa fa-trash"></i>') + ' ' + (btnLabel || 'Delete');
+  btn.className = 'btn ' + (btnClass || 'btn-danger');
+  confirmCallback = callback;
+  document.getElementById('confirmOverlay').style.display = 'flex';
+}
+function closeConfirm() {
+  document.getElementById('confirmOverlay').style.display = 'none';
+  confirmCallback = null;
+}
+function confirmAction() {
+  var cb = confirmCallback;
+  closeConfirm();
+  if (cb) cb();
+}
+
+// ─── Delete user ───
+function deleteUser(id, username) {
+  showConfirm('Delete user "' + username + '"?', function() {
+    fetch('/users/delete/' + id, { method: 'POST' })
+      .then(r => r.json()).then(d => {
+        if (d.success) { toast('User deleted'); location.reload(); }
+        else { toast(d.error || 'Delete failed', 'error'); }
+      }).catch(() => toast('Network error', 'error'));
+  }, 'Delete User');
+}
+
+// ─── Bulk upload ───
+function openBulkModal() {
+  document.getElementById('bulkModalOverlay').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function closeBulkModal() {
+  document.getElementById('bulkModalOverlay').style.display = 'none';
+  document.body.style.overflow = '';
+  document.getElementById('bulkResult').style.display = 'none';
+}
+function handleBulkFile(file) {
+  if (!file) return;
+  const fd = new FormData(); fd.append('file', file);
+  const r = document.getElementById('bulkResult');
+  r.style.display = 'block';
+  r.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Uploading...';
+  fetch('/bulk-upload', { method: 'POST', body: fd })
+    .then(v => v.json()).then(v => showBulkResult(v))
+    .catch(() => { r.innerHTML = '<span style="color:var(--danger-text)">Network error</span>'; });
+}
+function showBulkResult(v) {
+  const r = document.getElementById('bulkResult');
+  if (v.error) { r.innerHTML = '<span style="color:var(--danger-text)"><i class="fa fa-circle-exclamation"></i> ' + v.error + '</span>'; return; }
+  let html = '<div style="color:#6ee7b7;margin-bottom:8px"><i class="fa fa-circle-check"></i> ' + v.inserted + ' leads inserted</div>';
+  if (v.total_errors > 0) {
+    html += '<details style="margin-top:6px"><summary style="color:var(--danger-text);cursor:pointer;font-size:12px">' + v.total_errors + ' error(s)</summary>';
+    v.errors.forEach(function(e) { html += '<div style="color:var(--danger-text);font-size:11px;padding:2px 0">Row ' + e.row + ': ' + e.error + '</div>'; });
+    html += '</details>';
+  }
+  r.innerHTML = html;
+  toast(v.inserted + ' leads inserted');
+  setTimeout(function() { closeBulkModal(); fetchLeads(); }, 1500);
+}
+
+// ─── User management ───
+function createUser(e) {
+  e.preventDefault();
+  const d = new URLSearchParams();
+  d.append('username', document.getElementById('u_username').value.trim());
+  d.append('password', document.getElementById('u_password').value);
+  d.append('role', document.getElementById('u_role').value);
+  const msg = document.getElementById('createUserMsg');
+  msg.innerHTML = '';
+  const btn = e.target.querySelector('button[type=submit]');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Creating...';
+  fetch('/users/create', { method: 'POST', body: d })
+    .then(r => r.json()).then(r => {
+      if (r.success) {
+        msg.innerHTML = '<span style="color:#6ee7b7">User created successfully.</span>';
+        document.getElementById('u_username').value = '';
+        document.getElementById('u_password').value = '';
+        toast('User created');
+        setTimeout(() => location.reload(), 800);
+      } else {
+        msg.innerHTML = '<span style="color:var(--danger-text)">' + r.error + '</span>';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-save"></i> Create User';
+      }
+    }).catch(() => {
+      msg.innerHTML = '<span style="color:var(--danger-text)">Network error</span>';
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa fa-save"></i> Create User';
+    });
+  return false;
+}
+
+// ─── Database Management ───
+function loadDbStats() {
+  fetch('/api/leads/stats').then(r => r.json()).then(d => {
+    const el = document.getElementById('dbStats');
+    if (el) el.innerHTML = '<div style="padding:4px 0"><i class="fa fa-table" style="color:var(--accent-light);margin-right:6px"></i> Total Leads: <strong>' + d.total + '</strong></div>';
+  }).catch(() => {});
+}
+
+function createDatabase(e) {
+  e.preventDefault();
+  const name = document.getElementById('dbNameInput').value.trim();
+  const msg = document.getElementById('createDbMsg');
+  msg.innerHTML = '';
+  const btn = e.target.querySelector('button[type=submit]');
+  btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Creating...';
+  fetch('/api/databases/create', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name: name}) })
+    .then(r => r.json()).then(d => {
+      if (d.success) { toast('Database created: ' + d.name); setTimeout(() => location.reload(), 800); }
+      else { msg.innerHTML = '<span style="color:var(--danger-text)">' + d.error + '</span>'; btn.disabled = false; btn.innerHTML = '<i class="fa fa-plus"></i> Create'; }
+    }).catch(() => { msg.innerHTML = '<span style="color:var(--danger-text)">Network error</span>'; btn.disabled = false; btn.innerHTML = '<i class="fa fa-plus"></i> Create'; });
+  return false;
+}
+
+function switchDatabase(name) {
+  showConfirm('Switch to database "' + name + '"?', function() {
+    fetch('/api/databases/switch', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name: name}) })
+      .then(r => r.json()).then(d => {
+        if (d.success) { toast('Switched to ' + d.name); setTimeout(() => location.reload(), 500); }
+        else { toast(d.error || 'Switch failed', 'error'); }
+      }).catch(() => toast('Network error', 'error'));
+  }, 'Switch', 'btn-primary', '<i class="fa fa-arrow-right-arrow-left"></i>');
+}
+
+function deleteDatabase(name) {
+  showConfirm('Delete database "' + name + '"? This cannot be undone.', function() {
+    fetch('/api/databases/delete', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name: name}) })
+      .then(r => r.json()).then(d => {
+        if (d.success) { toast('Database deleted'); location.reload(); }
+        else { toast(d.error || 'Delete failed', 'error'); }
+      }).catch(() => toast('Network error', 'error'));
+  }, 'Delete');
+}
+
+function renameDatabase(oldName) {
+  const newName = prompt('Rename "' + oldName + '" to:', oldName);
+  if (!newName || newName === oldName) return;
+  fetch('/api/databases/rename', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({old_name: oldName, new_name: newName}) })
+    .then(r => r.json()).then(d => {
+      if (d.success) { toast('Renamed to ' + d.name); location.reload(); }
+      else { toast(d.error || 'Rename failed', 'error'); }
+    }).catch(() => toast('Network error', 'error'));
+}
+
+// ─── Search on Enter ───
+document.getElementById('searchInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') { e.preventDefault(); loadLeads(); }
+});
+
+// ─── Initial load ───
+document.addEventListener('DOMContentLoaded', function() {
+  {% if tab == 'leads' and not show_trash %}
+  const activeTh = document.querySelector(`#tableHeaders .sortable[data-sort="${sortField}"]`);
+  if (activeTh) activeTh.classList.add('active');
+  fetchLeads();
+  {% elif tab == 'database' and user_role == 'admin' %}
+  loadDbStats();
+  {% endif %}
+});
+
+// ─── Analytics charts ───
+{% if analytics %}
+var countryLabels = [{% for c in analytics.countries %}"{{ c[0]|e }}",{% endfor %}];
+var countryValues = [{% for c in analytics.countries %}{{ c[1] }},{% endfor %}];
+var colors = ["rgba(99,102,241,0.7)","rgba(139,92,246,0.7)","rgba(16,185,129,0.7)","rgba(245,158,11,0.7)","rgba(239,68,68,0.7)","rgba(236,72,153,0.7)","rgba(34,211,238,0.7)","rgba(251,146,60,0.7)","rgba(52,211,153,0.7)","rgba(167,139,250,0.7)"];
+
+// Country chart
+var ctx1 = document.getElementById('countryChart');
+if (ctx1) {
+  new Chart(ctx1, {
+    type: 'pie',
+    data: { labels: countryLabels, datasets: [{ data: countryValues, backgroundColor: colors.slice(0, countryLabels.length), borderWidth: 1 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#94a3b8', font: { size: 11 }, padding: 12 } } } }
+  });
+}
+
+// Leads over time chart
+var timeData = [
+  {% for t in analytics.over_time %}
+  { day: "{{ t[0] }}", count: {{ t[1] }} },
+  {% endfor %}
+];
+var ctx2 = document.getElementById('timeChart');
+if (ctx2 && timeData.length) {
+  new Chart(ctx2, {
+    type: 'line',
+    data: {
+      labels: timeData.map(function(d) { return d.day; }),
+      datasets: [{
+        label: 'Leads',
+        data: timeData.map(function(d) { return d.count; }),
+        borderColor: '#818cf8',
+        backgroundColor: 'rgba(99,102,241,0.1)',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 3,
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: {
+        x: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: 'rgba(99,102,241,0.06)' } },
+        y: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: 'rgba(99,102,241,0.06)' }, beginAtZero: true }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+} else if (ctx2) {
+  ctx2.parentElement.innerHTML = '<div style="text-align:center;padding:60px 20px;color:var(--text-muted);font-size:13px">No data yet</div>';
+}
+
+// Status breakdown chart
+var statusLabels = [{% for s in analytics.status_breakdown %}"{{ s[0] }}",{% endfor %}];
+var statusValues = [{% for s in analytics.status_breakdown %}{{ s[1] }},{% endfor %}];
+var statusColors = { 'New': 'rgba(99,102,241,0.7)', 'Contacted': 'rgba(245,158,11,0.7)', 'Qualified': 'rgba(16,185,129,0.7)', 'Lost': 'rgba(239,68,68,0.7)', 'Deleted': 'rgba(100,116,139,0.7)' };
+var statusChartColors = statusLabels.map(function(l) { return statusColors[l] || 'rgba(99,102,241,0.7)'; });
+var ctx3 = document.getElementById('statusChart');
+if (ctx3 && statusLabels.length) {
+  new Chart(ctx3, {
+    type: 'doughnut',
+    data: { labels: statusLabels, datasets: [{ data: statusValues, backgroundColor: statusChartColors, borderWidth: 1 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#94a3b8', font: { size: 11 }, padding: 12 } } } }
+  });
+} else if (ctx3) {
+  ctx3.parentElement.innerHTML = '<div style="text-align:center;padding:60px 20px;color:var(--text-muted);font-size:13px">No data yet</div>';
+}
+// Job titles horizontal bar chart
+var jtLabels = [{% for jt in analytics.job_titles %}"{{ jt[0]|e }}",{% endfor %}];
+var jtValues = [{% for jt in analytics.job_titles %}{{ jt[1] }},{% endfor %}];
+var ctx4 = document.getElementById('jobTitlesChart');
+if (ctx4 && jtLabels.length) {
+  new Chart(ctx4, {
+    type: 'bar',
+    data: {
+      labels: jtLabels,
+      datasets: [{
+        label: 'Leads',
+        data: jtValues,
+        backgroundColor: 'rgba(99,102,241,0.6)',
+        borderColor: 'rgba(99,102,241,0.8)',
+        borderWidth: 1,
+        borderRadius: 4
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true, maintainAspectRatio: false,
+      scales: {
+        x: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: 'rgba(99,102,241,0.06)' }, beginAtZero: true },
+        y: { ticks: { color: '#94a3b8', font: { size: 11 } }, grid: { display: false } }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+} else if (ctx4) {
+  ctx4.parentElement.innerHTML = '<div style="text-align:center;padding:60px 20px;color:var(--text-muted);font-size:13px">No data yet</div>';
+}
+{% endif %}
+</script>
+</body>
+</html>
