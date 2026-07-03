@@ -1,0 +1,46 @@
+# Virtual environment
+venv/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Database (large DuckDB file - 113MB)
+portal_master.db
+*.db.backup
+Test.db
+
+# Cookies / temp exports
+cookies*.txt
+
+# Stray log / err files
+err.log
+nul
+server_out.log
+server_err.txt
+
+# Environment & IDE
+.env
+.vs/
+.vscode/
+.idea/
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Temp / log files
+*.log
+*.tmp
+nul
+
+# Project data (generated at runtime)
+exports/
+output/
+mappings/
+ABM_Backups/
+ABM_Local_Backups/
+ABM_Logs/
