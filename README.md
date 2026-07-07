@@ -9,7 +9,7 @@ pip install -r requirements.txt
 python app.py
 ```
 
-Open `http://127.0.0.1:5001` and sign in with **admin / admin**.
+Open `http://0.0.0.0:0000` and sign in with **admin / admin**.
 
 ## Tech Stack
 
@@ -150,10 +150,10 @@ All charts use Chart.js (loaded from CDN).
 ## Running
 
 ```bash
-# Development (port 5001)
+# Development (port 0000)
 python app.py
 
-# Alternate (port 5008)
+# Alternate (port 0000)
 python run_app.py
 
 # Windows double-click
