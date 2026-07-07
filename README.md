@@ -205,3 +205,29 @@ Generates ~7500 leads across 15 countries with realistic names, job titles, and 
 | entity_id | VARCHAR | |
 | details | VARCHAR | JSON payload |
 | created_at | TIMESTAMP | |
+
+## Screenshots & Demos
+
+### Login Page
+![Login Page](images/Login%20Page.png)
+
+### Home Page - Main Dashboard
+![HomePage](images/HomePage.png)
+
+### Activity Tracking
+![Activity Tracking](images/Activity%20Tracking.png)
+
+### Analytics Dashboard
+![Analytics](images/Analytics.png)
+
+### Database Management
+![Database Management](images/Database%20Management.png)
+
+### Admin User Management & Access Control
+![Admin User Management](images/Admin%20%20User%20Management%20%26%20Acccess%20controll.png)
+
+### Change Password at First Login
+![Change Password](images/Change%20Password%20at%20first%20Login.png)
+
+### Recycle Bin - Soft Delete Restoration
+![Recycle Bin](images/Recycle%20Bin.png)
